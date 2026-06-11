@@ -23,6 +23,40 @@ A secure full-stack contact management web application built with **Java Spring 
 
 ---
 
+## Screenshots
+
+### Landing Page
+![Landing page](src/main/resources/static/image/ss/dashboard.png)
+
+### Features Overview
+![Features section](src/main/resources/static/image/ss/Dashboard1.png)
+
+### Sign Up
+![Sign up page](src/main/resources/static/image/ss/sign-up.png)
+
+### Sign In
+![Sign in page](src/main/resources/static/image/ss/sign-in.png)
+
+### User Dashboard
+![User dashboard with stats and quick actions](src/main/resources/static/image/ss/user-dashboard.png)
+
+### AI Assistant
+![AI assistant chat](src/main/resources/static/image/ss/AI-assistant.png)
+
+### Contact List
+![Contact list with search and filters](src/main/resources/static/image/ss/Contacts.png)
+
+### Add Contact
+![Add contact form](src/main/resources/static/image/ss/add-contact.png)
+
+### CSV Import
+![CSV import page](src/main/resources/static/image/ss/csv.png)
+
+### Sample CSV Format
+![Sample CSV template](src/main/resources/static/image/ss/sample-csv.png)
+
+---
+
 ## Tech Stack
 
 | Layer | Technologies |
@@ -40,20 +74,18 @@ A secure full-stack contact management web application built with **Java Spring 
 
 ```
 .
-├── .github/workflows/ci.yml    # GitHub Actions CI
+├── .github/workflows/ci.yml
+├── docker-compose.yml
 ├── Dockerfile
-├── docker-compose.yml          # Local dev (app + MySQL)
-├── .env.example
+├── mvnw
 ├── pom.xml
-├── README.md
 └── src/
-    ├── main/java/...           # Controllers, services, config
+    ├── main/java/              # Controllers, services, config
     ├── main/resources/
     │   ├── application.properties
-    │   ├── application-prod.properties
-    │   ├── templates/          # Thymeleaf pages
-    │   └── static/             # CSS, images
-    └── test/                   # Integration tests
+    │   ├── templates/
+    │   └── static/image/ss/    # Screenshots
+    └── test/
 ```
 
 ---
@@ -112,22 +144,18 @@ Tests use an in-memory H2 database — no MySQL required.
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DB_URL` | No* | built from parts | Full JDBC connection string |
-| `DB_HOST` | No | `localhost` | MySQL host |
-| `DB_PORT` | No | `3306` | MySQL port |
-| `DB_NAME` | No | `smart_contact_manager` | Database name |
-| `DB_USERNAME` | No | `root` | Database user |
-| `DB_PASSWORD` | **Yes** (prod) | — | Database password |
-| `DB_SSL` | No | `false` | Set `true` for managed cloud MySQL |
-| `SERVER_PORT` | No | `8085` | App port (local/Docker) |
-| `PORT` | No | — | Used by Render/Railway (overrides SERVER_PORT) |
-| `SPRING_PROFILES_ACTIVE` | No | — | Set `prod` for deployment |
-| `UPLOAD_DIR` | No | `uploads` | Profile/contact image storage |
-| `OPENAI_API_KEY` | No | — | Enables AI Assistant |
+Copy `.env.example` to `.env` or export these before running:
 
-\* Set either `DB_URL` or `DB_HOST` + `DB_PORT` + `DB_NAME`.
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DB_HOST` | `localhost` | MySQL host |
+| `DB_PORT` | `3306` | MySQL port |
+| `DB_NAME` | `smart_contact_manager` | Database name |
+| `DB_USERNAME` | `root` | Database user |
+| `DB_PASSWORD` | — | Database password |
+| `SERVER_PORT` | `8085` | App port |
+| `UPLOAD_DIR` | `uploads` | Image upload folder |
+| `OPENAI_API_KEY` | — | Enables AI Assistant |
 
 ---
 
@@ -168,7 +196,6 @@ Tests use an in-memory H2 database — no MySQL required.
 - Contact ownership validation before view/update/delete
 - Credentials externalized via environment variables
 - CSRF protection enabled (Spring Security default)
-- Production profile: secure cookies, no stack traces in errors
 
 ---
 

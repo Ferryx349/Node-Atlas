@@ -22,7 +22,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                 .requestMatchers("/", "/signin", "/signup", "/regis", "/css/**", "/js/**", "/image/**").permitAll()
                 .requestMatchers("/uploads/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")

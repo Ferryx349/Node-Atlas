@@ -56,24 +56,28 @@
 
             <div class="scm-card-body border-top d-flex gap-2 flex-wrap justify-content-center">
                 <form method="post" th:action="@{/user/ai/generate-notes}" class="d-inline">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <input type="hidden" name="contactId" th:value="${con.cid}">
                     <button type="submit" class="btn-scm btn-scm-outline">
                         <i class="fas fa-wand-magic-sparkles"></i> AI Notes
                     </button>
                 </form>
                 <form method="post" th:action="@{'/user/favorite/'+${con.cid}}" class="d-inline">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <button type="submit" class="btn-scm btn-scm-outline">
                         <i class="fas fa-star"></i>
                         <span th:text="${con.favorite} ? 'Remove Favorite' : 'Add to Favorites'">Favorite</span>
                     </button>
                 </form>
                 <form method="post" th:action="@{'/user/upd/'+${con.cid}}" class="d-inline">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <button type="submit" class="btn-scm btn-scm-primary">
                         <i class="fas fa-pen"></i> Edit Contact
                     </button>
                 </form>
                 <form method="post" th:action="@{'/user/delete/'+${con.cid}}" class="d-inline"
                     onsubmit="return confirm('Delete this contact permanently?');">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <button type="submit" class="btn-scm btn-scm-danger">
                         <i class="fas fa-trash"></i> Delete
                     </button>

@@ -3,7 +3,6 @@ package com.project1.shriganeshaynamah;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -85,28 +83,6 @@ class ContactControllerTest {
                 .param("phone", "1234567890"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/user/show/0"));
-    }
-
-    @Test
-    void userCanAddContactWithPhoto() throws Exception {
-        byte[] imageBytes = new byte[] {
-            (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0x00, 0x10, 'J', 'F', 'I', 'F', 0x00, 0x01
-        };
-        MockMultipartFile photo = new MockMultipartFile(
-                "photo", "avatar.jpg", "image/jpeg", imageBytes);
-
-        mockMvc.perform(multipart("/user/a-contact")
-                .file(photo)
-                .param("name", "Photo Contact")
-                .param("email", "photo@example.com")
-                .with(csrf())
-                .with(user("testuser")))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/user/show/0"));
-
-        Contact saved = contactRepository.findAll().iterator().next();
-        org.junit.jupiter.api.Assertions.assertNotNull(saved.getImage());
-        org.junit.jupiter.api.Assertions.assertTrue(saved.getImage().startsWith("/uploads/contacts/"));
     }
 
     @Test

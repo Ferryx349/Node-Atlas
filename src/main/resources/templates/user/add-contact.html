@@ -11,7 +11,8 @@
                 <h2><i class="fas fa-user-plus me-2"></i>Add New Contact</h2>
             </div>
             <div class="scm-card-body">
-                <form th:object="${contact}" method="post" th:action="@{/user/a-contact}" enctype="multipart/form-data">
+                <form id="contactForm" th:object="${contact}" method="post" th:action="@{/user/a-contact}">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <p class="form-section-title">Profile Photo</p>
                     <div class="image-upload-zone mb-4">
                         <div class="photo-preview" id="photoPreview">
@@ -98,6 +99,15 @@
         </div>
     </section>
     <script>
+        document.getElementById('contactForm')?.addEventListener('submit', function () {
+            const photo = document.getElementById('photo');
+            if (photo?.files?.length > 0) {
+                this.enctype = 'multipart/form-data';
+            } else {
+                this.removeAttribute('enctype');
+            }
+        });
+
         document.getElementById('photo')?.addEventListener('change', function (e) {
             const preview = document.getElementById('photoPreview');
             const file = e.target.files[0];

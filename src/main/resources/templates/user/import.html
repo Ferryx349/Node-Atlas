@@ -17,6 +17,7 @@
                 </p>
 
                 <form method="post" th:action="@{/user/import}" enctype="multipart/form-data">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <div class="form-field mb-4">
                         <label for="file">CSV File</label>
                         <input type="file" class="form-control" id="file" name="file" accept=".csv,text/csv" required>

@@ -28,6 +28,7 @@
                             </div>
                             <div class="image-upload-controls">
                                 <form method="post" th:action="@{/user/profile/photo}" enctype="multipart/form-data" class="d-inline">
+                                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                                     <label class="btn-scm btn-scm-outline btn-scm-sm" for="profilePhoto">
                                         <i class="fas fa-upload"></i> Upload Photo
                                     </label>
@@ -36,6 +37,7 @@
                                 </form>
                                 <form th:if="${user.imageurl != null and !user.imageurl.isEmpty()}"
                                     method="post" th:action="@{/user/profile/photo}" class="d-inline ms-2">
+                                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                                     <input type="hidden" name="removePhoto" value="true">
                                     <button type="submit" class="btn-scm btn-scm-outline btn-scm-sm">
                                         <i class="fas fa-trash"></i> Remove
@@ -55,6 +57,7 @@
                     </div>
                     <div class="scm-card-body">
                         <form method="post" th:action="@{/user/profile/update}">
+                            <th:block th:replace="~{user/base :: csrf}"></th:block>
                             <div class="form-field mb-3">
                                 <label for="name">Username</label>
                                 <input type="text" class="form-control" id="name" name="name" th:value="${user.name}" required>
@@ -82,6 +85,7 @@
                     </div>
                     <div class="scm-card-body">
                         <form method="post" th:action="@{/user/profile/password}">
+                            <th:block th:replace="~{user/base :: csrf}"></th:block>
                             <div class="form-field mb-3">
                                 <label for="currentPassword">Current Password</label>
                                 <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>

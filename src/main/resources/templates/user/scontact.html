@@ -91,12 +91,14 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <form method="post" th:action="@{'/user/upd/'+${c.cid}}" class="d-inline">
+                                                <th:block th:replace="~{user/base :: csrf}"></th:block>
                                                 <button type="submit" class="btn-scm btn-scm-outline btn-scm-sm">
                                                     <i class="fas fa-pen"></i>
                                                 </button>
                                             </form>
                                             <form method="post" th:action="@{'/user/delete/'+${c.cid}}" class="d-inline"
                                                 onsubmit="return confirm('Delete this contact?');">
+                                                <th:block th:replace="~{user/base :: csrf}"></th:block>
                                                 <button type="submit" class="btn-scm btn-scm-danger btn-scm-sm">
                                                     <i class="fas fa-trash"></i>
                                                 </button>

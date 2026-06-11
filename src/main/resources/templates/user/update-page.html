@@ -15,7 +15,8 @@
                 </h2>
             </div>
             <div class="scm-card-body">
-                <form th:object="${cp}" method="post" th:action="@{/user/upt}" enctype="multipart/form-data">
+                <form id="updateContactForm" th:object="${cp}" method="post" th:action="@{/user/upt}">
+                    <th:block th:replace="~{user/base :: csrf}"></th:block>
                     <input type="hidden" th:field="*{cid}" />
 
                     <p class="form-section-title">Profile Photo</p>
@@ -110,6 +111,15 @@
         </div>
     </section>
     <script>
+        document.getElementById('updateContactForm')?.addEventListener('submit', function () {
+            const photo = document.getElementById('photo');
+            if (photo?.files?.length > 0) {
+                this.enctype = 'multipart/form-data';
+            } else {
+                this.removeAttribute('enctype');
+            }
+        });
+
         document.getElementById('photo')?.addEventListener('change', function (e) {
             const preview = document.getElementById('photoPreview');
             const file = e.target.files[0];
