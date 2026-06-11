@@ -1,25 +1,59 @@
 # Smart Contact Manager
 
-A secure full-stack contact management web application built with **Java Spring Boot**, **Spring Security**, **Thymeleaf**, and **MySQL**. Users can register, sign in, and manage their personal and professional contacts with search and pagination.
+A secure full-stack contact management app built with **Spring Boot**, **Spring Security**, **Spring AI**, **Thymeleaf**, and **MySQL**. Manage contacts with CRUD, search, CSV tools, and an **AI Assistant** powered by OpenAI through **Spring AI**.
+
+---
+
+## Demo Video
+
+[![Smart Contact Manager Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://youtu.be/YOUR_VIDEO_ID)
+
+**[Watch full demo →](https://youtu.be/YOUR_VIDEO_ID)**
+
+> Replace `YOUR_VIDEO_ID` with your YouTube video ID once uploaded.
+
+---
+
+## AI Assistant (Spring AI)
+
+This project integrates **[Spring AI](https://docs.spring.io/spring-ai/reference/)** with OpenAI to add intelligent features on top of your contact data.
+
+| Feature | Description |
+|---------|-------------|
+| **Contact Q&A** | Ask natural-language questions about your contacts (e.g. *"Who are my favorite work contacts?"*) |
+| **Contact Summary** | AI-generated overview of your contact book — totals, categories, favorites |
+| **AI Notes** | Auto-generate short professional notes for any contact |
+| **Context-aware** | Only uses **your** contacts as context — no hallucinated data |
+| **Graceful fallback** | App runs without AI if `OPENAI_API_KEY` is not set |
+
+**How it works:**
+- `ContactAiService` builds a contact context from the user's database records
+- `ChatModel` (Spring AI) sends structured prompts with system + user messages
+- `AiController` serves the chat UI; `AiApiController` exposes JSON endpoints
+- `AiConfig` activates only when an API key is present (`@ConditionalOnExpression`)
+
+**Enable AI locally:**
+```bash
+export OPENAI_API_KEY=your-openai-api-key
+./mvnw spring-boot:run
+```
+Then open **AI Assistant** from the sidebar at `/user/ai`.
 
 ---
 
 ## Features
 
+- **Spring AI Assistant** — chat, summaries, and contact note generation
 - User registration and authentication (BCrypt password hashing)
-- Protected user dashboard and contact routes
 - Create, view, update, and delete contacts
-- Search contacts by name, category, and favorites
+- Search, filter, favorites, and pagination
 - Contact categories (Work, Personal, Family, Other)
-- Favorite/star contacts
-- Paginated contact listing
-- **REST API** (`/api/contacts`) with JSON responses
-- **CSV export & import** for bulk contact management
-- **User profile** management and password change
-- **AI Assistant** (optional, requires OpenAI API key)
+- **REST API** (`/api/contacts`, `/api/ai`) with JSON responses
+- **CSV import & export** for bulk contact management
+- User profile management with photo upload
 - Dashboard analytics (totals by category and favorites)
 - Responsive UI with Bootstrap 5
-- Ownership checks — users can only access their own contacts
+- Per-user data isolation and ownership checks
 
 ---
 
@@ -41,7 +75,7 @@ A secure full-stack contact management web application built with **Java Spring 
 ![User dashboard with stats and quick actions](src/main/resources/static/image/ss/user-dashboard.png)
 
 ### AI Assistant
-![AI assistant chat](src/main/resources/static/image/ss/AI-assistant.png)
+![AI assistant chat powered by Spring AI](src/main/resources/static/image/ss/AI-assistant.png)
 
 ### Contact List
 ![Contact list with search and filters](src/main/resources/static/image/ss/Contacts.png)
@@ -62,6 +96,7 @@ A secure full-stack contact management web application built with **Java Spring 
 | Layer | Technologies |
 |-------|-------------|
 | Backend | Java 17, Spring Boot 3.5, Spring MVC, Spring Data JPA, Spring Security |
+| **AI** | **Spring AI 1.0, OpenAI ChatModel, Prompt API** |
 | Frontend | Thymeleaf, HTML5, CSS3, Bootstrap 5 |
 | Database | MySQL |
 | Build | Maven |
@@ -80,12 +115,14 @@ A secure full-stack contact management web application built with **Java Spring 
 ├── mvnw
 ├── pom.xml
 └── src/
-    ├── main/java/              # Controllers, services, config
-    ├── main/resources/
-    │   ├── application.properties
-    │   ├── templates/
-    │   └── static/image/ss/    # Screenshots
-    └── test/
+    ├── main/java/
+    │   ├── Controllers/     # MVC + REST (Contact, AI, CSV, Auth)
+    │   ├── service/         # ContactAiService, ContactService
+    │   └── config/          # Security, AiConfig, WebConfig
+    └── main/resources/
+        ├── application.properties
+        ├── templates/
+        └── static/image/ss/
 ```
 
 ---
@@ -95,6 +132,7 @@ A secure full-stack contact management web application built with **Java Spring 
 - Java 17+
 - Maven 3.8+ (or use the included Maven wrapper)
 - MySQL 8+ (or Docker)
+- OpenAI API key *(optional, for AI Assistant)*
 
 ---
 
@@ -116,17 +154,16 @@ Open [http://localhost:8085](http://localhost:8085)
 ```bash
 git clone https://github.com/Ferryx349/SCM.git
 cd SCM
-cp .env.example .env   # edit DB_PASSWORD if needed
+cp .env.example .env
 
-# Start MySQL (Docker)
 docker compose up -d mysql
 
-# Run the app
 export DB_HOST=localhost
 export DB_PORT=3307
 export DB_USERNAME=root
 export DB_PASSWORD=scm_secret
 export SERVER_PORT=8085
+export OPENAI_API_KEY=your-key-here   # optional
 ./mvnw spring-boot:run
 ```
 
@@ -155,30 +192,30 @@ Copy `.env.example` to `.env` or export these before running:
 | `DB_PASSWORD` | — | Database password |
 | `SERVER_PORT` | `8085` | App port |
 | `UPLOAD_DIR` | `uploads` | Image upload folder |
-| `OPENAI_API_KEY` | — | Enables AI Assistant |
+| `OPENAI_API_KEY` | — | **Enables Spring AI / OpenAI** |
+| `OPENAI_MODEL` | `gpt-4o-mini` | OpenAI model name |
 
 ---
 
 ## Web Routes
 
-| Method | Route | Description | Auth Required |
-|--------|-------|-------------|---------------|
+| Method | Route | Description | Auth |
+|--------|-------|-------------|------|
 | GET | `/` | Home page | No |
 | GET | `/signin` | Login page | No |
 | GET | `/signup` | Signup page | No |
-| POST | `/regis` | Register user | No |
-| POST | `/logged` | Login (Spring Security) | No |
-| POST | `/logout` | Logout | Yes |
 | GET | `/user/index` | User dashboard | Yes |
-| GET | `/user/profile` | Edit profile & password | Yes |
+| GET | `/user/ai` | **AI Assistant chat** | Yes |
 | GET | `/addcontact` | Add contact form | Yes |
-| GET | `/user/export/csv` | Download contacts as CSV | Yes |
-| GET/POST | `/user/import` | Import contacts from CSV | Yes |
+| GET | `/user/export/csv` | Download CSV | Yes |
+| GET/POST | `/user/import` | Import CSV | Yes |
+| POST | `/user/ai/generate-notes` | **AI notes for contact** | Yes |
 
 ## REST API (JSON)
 
-> Requires an authenticated session (log in via browser first).
+> Requires an authenticated session.
 
+### Contacts
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/contacts` | List contacts |
@@ -187,15 +224,23 @@ Copy `.env.example` to `.env` or export these before running:
 | PUT | `/api/contacts/{id}` | Update contact |
 | DELETE | `/api/contacts/{id}` | Delete contact |
 
+### Spring AI
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/ai/status` | Check if AI is enabled |
+| POST | `/api/ai/chat` | Ask a question about your contacts |
+| POST | `/api/ai/summary` | Get AI summary of contact book |
+| POST | `/api/ai/contacts/{id}/notes` | Generate notes for one contact |
+
 ---
 
 ## Security Highlights
 
 - BCrypt password encoding
-- Authenticated access for all `/user/**` routes
+- Authenticated access for all `/user/**` and `/api/**` routes
 - Contact ownership validation before view/update/delete
-- Credentials externalized via environment variables
-- CSRF protection enabled (Spring Security default)
+- CSRF protection on form submissions
+- OpenAI API key stored via environment variables only
 
 ---
 
