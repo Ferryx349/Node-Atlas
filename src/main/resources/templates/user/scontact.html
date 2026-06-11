@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base::bas(~{:: section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Contacts - Smart Contact Manager</title>
+</head>
+<body>
+    <section>
+        <div class="scm-card">
+            <div class="scm-card-header">
+                <h2><i class="fas fa-users me-2"></i>My Contacts</h2>
+                <div class="quick-actions">
+                    <a th:href="@{/user/export/csv}" class="btn-scm btn-scm-outline btn-scm-sm">
+                        <i class="fas fa-file-export"></i> Export
+                    </a>
+                    <a th:href="@{/addcontact}" class="btn-scm btn-scm-primary btn-scm-sm">
+                        <i class="fas fa-plus"></i> Add New
+                    </a>
+                </div>
+            </div>
+            <div class="scm-card-body">
+                <div th:if="${message}" th:classappend="${message?.type}" class="alert alert-scm" role="alert">
+                    <span th:text="${message?.content}"></span>
+                </div>
+
+                <form class="mb-4" method="get" th:action="@{/user/show/0}">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Search</label>
+                            <input type="text" name="keyword" class="form-control" placeholder="Search by name..."
+                                th:value="${keyword}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">All categories</option>
+                                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"
+                                    th:selected="${cat == selectedCategory}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" name="favorites" value="true"
+                                    id="favorites" th:checked="${favoritesOnly}">
+                                <label class="form-check-label" for="favorites">Favorites only</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn-scm btn-scm-primary btn-scm-sm me-1">Filter</button>
+                            <a th:href="@{/user/show/0}" class="btn-scm btn-scm-outline btn-scm-sm">Clear</a>
+                        </div>
+                    </div>
+                </form>
+
+                <div th:if="${contacts.totalElements > 0}">
+                    <div class="table-responsive">
+                        <table class="contact-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${contacts}">
+                                    <td>
+                                        <i class="fas fa-star" th:if="${c.favorite}" title="Favorite"></i>
+                                    </td>
+                                    <th><span class="contact-id-badge" th:text="${'SCM' + c.cid}">SCM1</span></th>
+                                    <td>
+                                        <a class="contact-name-link" th:href="@{'/user/'+${c.cid}+'/ind'}">
+                                            <img th:if="${c.image != null and !c.image.isEmpty()}"
+                                                th:src="${c.image}" class="contact-avatar-img" alt="Contact photo">
+                                            <span th:unless="${c.image != null and !c.image.isEmpty()}"
+                                                class="contact-avatar-sm"
+                                                th:text="${#strings.substring(c.name, 0, 1).toUpperCase()}">J</span>
+                                            <span th:text="${c.name}">Name</span>
+                                        </a>
+                                    </td>
+                                    <td th:text="${c.category ?: 'Personal'}">Personal</td>
+                                    <td th:text="${c.email ?: '—'}">—</td>
+                                    <td th:text="${c.phone ?: '—'}">—</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <a th:href="@{'/user/'+${c.cid}+'/ind'}" class="btn-scm btn-scm-outline btn-scm-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <form method="post" th:action="@{'/user/upd/'+${c.cid}}" class="d-inline">
+                                                <button type="submit" class="btn-scm btn-scm-outline btn-scm-sm">
+                                                    <i class="fas fa-pen"></i>
+                                                </button>
+                                            </form>
+                                            <form method="post" th:action="@{'/user/delete/'+${c.cid}}" class="d-inline"
+                                                onsubmit="return confirm('Delete this contact?');">
+                                                <button type="submit" class="btn-scm btn-scm-danger btn-scm-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav th:if="${nopage > 1}" aria-label="Contact pagination">
+                        <ul class="scm-pagination list-unstyled d-flex">
+                            <li th:if="${currpage != 0}">
+                                <a class="page-link" th:href="@{/user/show/{page}(page=${currpage-1}, keyword=${keyword}, category=${selectedCategory}, favorites=${favoritesOnly})}">
+                                    <i class="fas fa-chevron-left"></i> Prev
+                                </a>
+                            </li>
+                            <li th:classappend="${currpage == i-1} ? 'active'" th:each="i : ${#numbers.sequence(1, nopage)}">
+                                <a class="page-link" th:href="@{/user/show/{page}(page=${i-1}, keyword=${keyword}, category=${selectedCategory}, favorites=${favoritesOnly})}" th:text="${i}"></a>
+                            </li>
+                            <li th:if="${currpage != nopage-1}">
+                                <a class="page-link" th:href="@{/user/show/{page}(page=${currpage+1}, keyword=${keyword}, category=${selectedCategory}, favorites=${favoritesOnly})}">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div th:if="${contacts.totalElements == 0}" class="empty-state">
+                    <i class="fas fa-address-book"></i>
+                    <h3>No contacts found</h3>
+                    <p>Try adjusting your filters or add a new contact.</p>
+                    <a th:href="@{/addcontact}" class="btn-scm btn-scm-primary mt-2">
+                        <i class="fas fa-user-plus"></i> Add Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

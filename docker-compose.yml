@@ -1,0 +1,49 @@
+# Local development — app + MySQL
+# Usage: cp .env.example .env && docker compose up --build
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: scm-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-scm_secret}
+      MYSQL_DATABASE: ${DB_NAME:-smart_contact_manager}
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD:-scm_secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  app:
+    build: .
+    container_name: scm-app
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-8085}:${SERVER_PORT:-8085}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-default}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-smart_contact_manager}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-scm_secret}
+      DB_SSL: "false"
+      SERVER_PORT: ${SERVER_PORT:-8085}
+      UPLOAD_DIR: /app/uploads
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+    volumes:
+      - upload_data:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+  upload_data:

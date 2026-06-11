@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::bas(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Contact Manager</title>
+</head>
+<body>
+    <section class="auth-page">
+        <div class="auth-card">
+            <div class="auth-card-visual">
+                <div class="visual-icon"><i class="fas fa-address-book"></i></div>
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your contacts, manage your network, and keep everything organized securely.</p>
+            </div>
+            <div class="auth-card-form">
+                <h1>Sign In</h1>
+                <p class="subtitle">Enter your credentials to continue</p>
+
+                <div th:if="${param.error}" class="alert alert-danger alert-scm">
+                    <i class="fas fa-circle-exclamation me-2"></i>Invalid username or password
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success alert-scm">
+                    <i class="fas fa-circle-check me-2"></i>Logged out successfully
+                </div>
+
+                <form th:action="@{/logged}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label" for="username">Username</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary-scm mb-3">
+                        <i class="fas fa-right-to-bracket me-2"></i>Sign In
+                    </button>
+                    <p class="text-center text-muted mb-0" style="font-size:0.9rem;">
+                        Don't have an account?
+                        <a class="auth-footer-link" th:href="@{/signup}">Create one</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

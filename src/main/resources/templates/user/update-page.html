@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base::bas(~{:: section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Contact - Smart Contact Manager</title>
+</head>
+<body>
+    <section>
+        <div class="scm-card">
+            <div class="scm-card-header">
+                <h2>
+                    <i class="fas fa-pen me-2"></i>
+                    Edit Contact
+                    <span class="contact-id-badge ms-2" th:text="${'SCM' + con.cid}">SCM1</span>
+                </h2>
+            </div>
+            <div class="scm-card-body">
+                <form th:object="${cp}" method="post" th:action="@{/user/upt}" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{cid}" />
+
+                    <p class="form-section-title">Profile Photo</p>
+                    <div class="image-upload-zone mb-4">
+                        <div class="photo-preview" id="photoPreview">
+                            <img th:if="${con.image != null and !con.image.isEmpty()}" th:src="${con.image}" alt="Current photo">
+                            <th:block th:if="${con.image == null or con.image.isEmpty()}">
+                                <i class="fas fa-camera"></i>
+                                <span>No photo</span>
+                            </th:block>
+                        </div>
+                        <div class="image-upload-controls">
+                            <label class="btn-scm btn-scm-outline btn-scm-sm" for="photo">
+                                <i class="fas fa-upload"></i> Change Image
+                            </label>
+                            <input type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp,image/gif" class="d-none">
+                            <div class="form-check mt-2" th:if="${con.image != null and !con.image.isEmpty()}">
+                                <input class="form-check-input" type="checkbox" id="removePhoto" name="removePhoto" value="true">
+                                <label class="form-check-label" for="removePhoto">Remove current photo</label>
+                            </div>
+                            <p class="image-upload-hint">JPG, PNG, WEBP, or GIF — max 5 MB</p>
+                        </div>
+                    </div>
+
+                    <p class="form-section-title">Basic Information</p>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Full Name <span class="text-danger">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input th:field="*{name}" type="text" class="form-control" placeholder="Full name" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label>Nickname</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-tag"></i>
+                                <input th:field="*{nickname}" type="text" class="form-control" placeholder="Nickname">
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label>Phone</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-phone"></i>
+                                <input th:field="*{phone}" type="text" class="form-control" placeholder="Phone number">
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label>Email</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input th:field="*{email}" type="email" class="form-control" placeholder="Email address">
+                            </div>
+                        </div>
+                                <div class="form-field full-width">
+                                    <label>Work / Company</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-briefcase"></i>
+                                        <input th:field="*{work}" type="text" class="form-control" placeholder="Company name">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label>Category</label>
+                                    <select class="form-control" th:field="*{category}">
+                                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+                                    </select>
+                                </div>
+                                <div class="form-field d-flex align-items-end">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" th:field="*{favorite}">
+                                        <label class="form-check-label">Mark as favorite</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="form-section-title mt-4">Additional Details</p>
+                    <div class="form-field">
+                        <label>Description / Notes</label>
+                        <textarea th:field="*{description}" rows="5" placeholder="Notes about this contact..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4 flex-wrap">
+                        <button type="submit" class="btn-scm btn-scm-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a th:href="@{'/user/'+${con.cid}+'/ind'}" class="btn-scm btn-scm-outline">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.getElementById('photo')?.addEventListener('change', function (e) {
+            const preview = document.getElementById('photoPreview');
+            const file = e.target.files[0];
+            if (!file || !preview) return;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                preview.innerHTML = '<img src="' + ev.target.result + '" alt="Preview">';
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>

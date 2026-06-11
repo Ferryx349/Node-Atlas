@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::bas(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Contact Manager</title>
+</head>
+<body>
+    <section class="landing-home">
+        <div class="hero">
+            <div class="hero-content">
+                <span class="hero-badge"><i class="fas fa-shield-halved me-1"></i> Secure &amp; Simple</span>
+                <h1 class="hero-title">
+                    <span id="typewriter-line1"></span><br>
+                    <span id="typewriter-line2"></span><span class="typewriter-cursor">|</span>
+                </h1>
+                <p class="hero-subtitle">Store, organize, search, and access your personal and professional contacts with a secure, modern dashboard built for speed.</p>
+
+                <div class="hero-features">
+                    <span class="hero-feature"><i class="fas fa-lock"></i> BCrypt Security</span>
+                    <span class="hero-feature"><i class="fas fa-magnifying-glass"></i> Instant Search</span>
+                    <span class="hero-feature"><i class="fas fa-cloud"></i> Cloud Ready</span>
+                </div>
+
+                <a class="btn-hero" th:href="@{/signin}">
+                    Get Started <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="landing-strip">
+            <div class="container">
+                <div class="strip-grid">
+                    <div class="strip-item">
+                        <span class="strip-number">REST</span>
+                        <span class="strip-label">JSON API</span>
+                    </div>
+                    <div class="strip-item">
+                        <span class="strip-number">CSV</span>
+                        <span class="strip-label">Import &amp; Export</span>
+                    </div>
+                    <div class="strip-item">
+                        <span class="strip-number">4+</span>
+                        <span class="strip-label">Contact Categories</span>
+                    </div>
+                    <div class="strip-item">
+                        <span class="strip-number">100%</span>
+                        <span class="strip-label">User Isolated Data</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-features">
+            <div class="container">
+                <div class="landing-section-header">
+                    <h2>Everything you need to stay organized</h2>
+                    <p>A clean, focused workspace for managing contacts without clutter.</p>
+                </div>
+                <div class="feature-cards">
+                    <div class="feature-card">
+                        <div class="feature-card-icon"><i class="fas fa-address-book"></i></div>
+                        <h3>Smart Contacts</h3>
+                        <p>Add, edit, and categorize contacts with favorites and advanced filters.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon"><i class="fas fa-code"></i></div>
+                        <h3>REST API</h3>
+                        <p>Full CRUD JSON endpoints for integration with other tools and services.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon"><i class="fas fa-file-csv"></i></div>
+                        <h3>CSV Tools</h3>
+                        <p>Bulk import contacts from spreadsheets or export your data anytime.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon"><i class="fas fa-user-shield"></i></div>
+                        <h3>Secure Auth</h3>
+                        <p>BCrypt password hashing, CSRF protection, and per-user data isolation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-cta">
+            <div class="container">
+                <h2>Ready to organize your network?</h2>
+                <p>Create a free account and start managing contacts in minutes.</p>
+                <div class="landing-cta-actions">
+                    <a class="btn-hero" th:href="@{/signup}">Create Account</a>
+                    <a class="btn-hero-outline" th:href="@{/signin}">Sign In</a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const line1 = document.getElementById('typewriter-line1');
+                const line2 = document.getElementById('typewriter-line2');
+                if (!line1 || !line2) return;
+
+                const text1 = 'Manage Every Contact,';
+                const text2 = 'All in One Place';
+
+                function wait(ms) {
+                    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+                }
+
+                function typeInto(el, text, speed) {
+                    return new Promise(function (resolve) {
+                        let i = 0;
+                        function step() {
+                            el.textContent = text.substring(0, i);
+                            if (i < text.length) {
+                                i++;
+                                setTimeout(step, speed);
+                            } else {
+                                resolve();
+                            }
+                        }
+                        step();
+                    });
+                }
+
+                function erase(el, speed) {
+                    return new Promise(function (resolve) {
+                        function step() {
+                            const current = el.textContent;
+                            if (current.length > 0) {
+                                el.textContent = current.substring(0, current.length - 1);
+                                setTimeout(step, speed);
+                            } else {
+                                resolve();
+                            }
+                        }
+                        step();
+                    });
+                }
+
+                async function loop() {
+                    while (true) {
+                        line1.textContent = '';
+                        line2.textContent = '';
+                        await typeInto(line1, text1, 75);
+                        await wait(350);
+                        await typeInto(line2, text2, 75);
+                        await wait(2800);
+                        await erase(line2, 35);
+                        await erase(line1, 35);
+                        await wait(600);
+                    }
+                }
+
+                loop();
+            })();
+        </script>
+    </section>
+</body>
+</html>

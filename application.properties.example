@@ -1,0 +1,23 @@
+# Environment variables for local development (no secrets in git).
+# Export these in your shell, or copy .env.example to .env for Docker Compose.
+
+# Database (use DB_URL OR individual parts)
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=smart_contact_manager
+DB_USERNAME=root
+DB_PASSWORD=your_password_here
+DB_SSL=false
+
+# Server
+SERVER_PORT=8085
+UPLOAD_DIR=uploads
+
+# Production (cloud)
+# SPRING_PROFILES_ACTIVE=prod
+# PORT=8085
+# DB_SSL=true
+
+# Optional AI
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini

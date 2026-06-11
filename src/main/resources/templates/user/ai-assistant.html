@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base::bas(~{:: section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Assistant - Smart Contact Manager</title>
+</head>
+<body>
+    <section>
+        <div class="scm-card ai-card">
+            <div class="scm-card-header">
+                <h2><i class="fas fa-robot me-2"></i>AI Contact Assistant</h2>
+                <span class="ai-status-badge" th:classappend="${aiEnabled} ? 'enabled' : 'disabled'"
+                    th:text="${aiEnabled} ? 'Spring AI Active' : 'API Key Required'">Status</span>
+            </div>
+            <div class="scm-card-body">
+                <div th:if="${!aiEnabled}" class="alert alert-scm alert-warning mb-4">
+                    <strong>Spring AI is ready in the codebase.</strong>
+                    Set <code>OPENAI_API_KEY</code> in your environment and restart to enable chat.
+                </div>
+
+                <p class="ai-intro">
+                    Ask natural-language questions about your contacts — favorites, categories, who works where, and more.
+                    Spring AI uses your saved contact data as context.
+                </p>
+
+                <div class="ai-chat-window" id="chatWindow">
+                    <div class="ai-message ai-message-bot">
+                        <div class="ai-message-label"><i class="fas fa-robot"></i> Assistant</div>
+                        <p>Hi! I can help you explore your contact book. Try asking:
+                            <em>"Who are my favorite work contacts?"</em> or
+                            <em>"Summarize my network."</em></p>
+                    </div>
+                </div>
+
+                <form class="ai-chat-form" id="chatForm">
+                    <div class="input-group">
+                        <input type="text" id="chatInput" class="form-control" placeholder="Ask about your contacts..."
+                            autocomplete="off" required>
+                        <button type="submit" class="btn-scm btn-scm-primary" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </form>
+
+                <div class="ai-quick-prompts mt-3">
+                    <button type="button" class="btn-scm btn-scm-outline btn-scm-sm ai-prompt-chip"
+                        data-prompt="Summarize all my contacts">Summarize contacts</button>
+                    <button type="button" class="btn-scm btn-scm-outline btn-scm-sm ai-prompt-chip"
+                        data-prompt="List my favorite contacts">Show favorites</button>
+                    <button type="button" class="btn-scm btn-scm-outline btn-scm-sm ai-prompt-chip"
+                        data-prompt="Which work contacts do I have?">Work contacts</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatForm = document.getElementById('chatForm');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+
+            function getCsrfToken() {
+                const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+                return match ? decodeURIComponent(match[1]) : '';
+            }
+
+            function appendMessage(role, text) {
+                const wrap = document.createElement('div');
+                wrap.className = 'ai-message ' + (role === 'user' ? 'ai-message-user' : 'ai-message-bot');
+                const label = role === 'user' ? '<i class="fas fa-user"></i> You' : '<i class="fas fa-robot"></i> Assistant';
+                wrap.innerHTML = '<div class="ai-message-label">' + label + '</div><p></p>';
+                wrap.querySelector('p').textContent = text;
+                chatWindow.appendChild(wrap);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            async function sendMessage(message) {
+                sendBtn.disabled = true;
+                appendMessage('user', message);
+
+                try {
+                    const response = await fetch('/api/ai/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-XSRF-TOKEN': getCsrfToken()
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+
+                    const data = await response.json();
+                    const reply = data?.data?.reply || data?.message || 'Something went wrong. Please try again.';
+                    appendMessage('bot', reply);
+                } catch (err) {
+                    appendMessage('bot', 'Could not reach the AI service. Check your connection and API key.');
+                } finally {
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                }
+            }
+
+            chatForm?.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const message = chatInput.value.trim();
+                if (!message) return;
+                chatInput.value = '';
+                sendMessage(message);
+            });
+
+            document.querySelectorAll('.ai-prompt-chip').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    sendMessage(btn.getAttribute('data-prompt'));
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

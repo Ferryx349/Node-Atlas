@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base::bas(~{:: section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Details - Smart Contact Manager</title>
+</head>
+<body>
+    <section>
+        <div class="scm-card">
+            <div class="contact-profile">
+                <img th:if="${con.image != null and !con.image.isEmpty()}"
+                    th:src="${con.image}" class="contact-profile-photo" alt="Contact photo">
+                <div th:unless="${con.image != null and !con.image.isEmpty()}"
+                    class="contact-profile-avatar"
+                    th:text="${#strings.substring(con.name, 0, 1).toUpperCase()}">J</div>
+                <h2 th:text="${con.name}">Contact Name</h2>
+                <p class="nickname" th:if="${con.nickname}" th:text="'@' + ${con.nickname}">@nickname</p>
+                <span class="contact-id-badge mt-2 d-inline-block" th:text="${'SCM' + con.cid}">SCM1</span>
+                <p class="mt-2 mb-0">
+                    <span class="contact-id-badge" th:text="${con.category ?: 'Personal'}">Personal</span>
+                    <span th:if="${con.favorite}" class="ms-2"><i class="fas fa-star"></i> Favorite</span>
+                </p>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label"><i class="fas fa-envelope"></i> Email</div>
+                    <div class="value" th:text="${con.email ?: 'Not provided'}">—</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label"><i class="fas fa-phone"></i> Phone</div>
+                    <div class="value" th:text="${con.phone ?: 'Not provided'}">—</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label"><i class="fas fa-briefcase"></i> Work</div>
+                    <div class="value" th:text="${con.work ?: 'Not provided'}">—</div>
+                </div>
+                <div class="detail-item" th:if="${con.nickname}">
+                    <div class="label"><i class="fas fa-tag"></i> Nickname</div>
+                    <div class="value" th:text="${con.nickname}">—</div>
+                </div>
+            </div>
+
+            <div class="description-box">
+                <div class="label"><i class="fas fa-align-left"></i> Notes</div>
+                <p th:text="${con.description ?: 'No notes added for this contact.'}">No notes.</p>
+            </div>
+
+            <div th:if="${aiGeneratedNotes}" class="ai-notes-suggestion">
+                <div class="label"><i class="fas fa-robot"></i> AI Suggested Notes</div>
+                <p th:text="${aiGeneratedNotes}">Suggested notes</p>
+                <p class="small text-muted mb-0">Copy these into the contact when editing.</p>
+            </div>
+
+            <div th:if="${aiError}" class="alert alert-scm alert-danger mx-3 mb-0" th:text="${aiError}"></div>
+
+            <div class="scm-card-body border-top d-flex gap-2 flex-wrap justify-content-center">
+                <form method="post" th:action="@{/user/ai/generate-notes}" class="d-inline">
+                    <input type="hidden" name="contactId" th:value="${con.cid}">
+                    <button type="submit" class="btn-scm btn-scm-outline">
+                        <i class="fas fa-wand-magic-sparkles"></i> AI Notes
+                    </button>
+                </form>
+                <form method="post" th:action="@{'/user/favorite/'+${con.cid}}" class="d-inline">
+                    <button type="submit" class="btn-scm btn-scm-outline">
+                        <i class="fas fa-star"></i>
+                        <span th:text="${con.favorite} ? 'Remove Favorite' : 'Add to Favorites'">Favorite</span>
+                    </button>
+                </form>
+                <form method="post" th:action="@{'/user/upd/'+${con.cid}}" class="d-inline">
+                    <button type="submit" class="btn-scm btn-scm-primary">
+                        <i class="fas fa-pen"></i> Edit Contact
+                    </button>
+                </form>
+                <form method="post" th:action="@{'/user/delete/'+${con.cid}}" class="d-inline"
+                    onsubmit="return confirm('Delete this contact permanently?');">
+                    <button type="submit" class="btn-scm btn-scm-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+                <a th:href="@{/user/show/0}" class="btn-scm btn-scm-outline">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
