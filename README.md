@@ -6,11 +6,9 @@ A secure full-stack contact management app built with **Spring Boot**, **Spring 
 
 ## Demo Video
 
-[![Smart Contact Manager Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://youtu.be/YOUR_VIDEO_ID)
+[![Smart Contact Manager Demo](https://img.youtube.com/vi/FgNxeohqZro/0.jpg)](https://youtu.be/FgNxeohqZro)
 
-**[Watch full demo →](https://youtu.be/YOUR_VIDEO_ID)**
-
-> Replace `YOUR_VIDEO_ID` with your YouTube video ID once uploaded.
+**[Watch full demo →](https://youtu.be/FgNxeohqZro)**
 
 ---
 
