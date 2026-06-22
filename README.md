@@ -1,4 +1,4 @@
-# Smart Contact Manager
+# Node Atlas - A Smart Contact Manager
 
 A secure full-stack contact management app built with **Spring Boot**, **Spring Security**, **Spring AI**, **Thymeleaf**, and **MySQL**. Manage contacts with CRUD, search, CSV tools, and an **AI Assistant** powered by OpenAI through **Spring AI**.
 
